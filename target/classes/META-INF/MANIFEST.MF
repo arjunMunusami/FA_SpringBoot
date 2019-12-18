@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: MyPc
+Build-Jdk: 13.0.1
+Implementation-Title: taskManagerFinal
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.fsd.assignment
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/taskManagerFinal
+Created-By: Maven Integration for Eclipse
+
