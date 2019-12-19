@@ -2,10 +2,9 @@ package com.fsd.assignment.taskmanager.controller;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +37,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/searchUser/{order}", method = {RequestMethod.GET})
 	public UserResultVO searchTask(Model model,
-			@PathParam("order") String orderByField) {
+			@PathVariable("order") String orderByField) {
 		UserResultVO resultVO = new UserResultVO();
 		
 		try {

@@ -12,11 +12,11 @@ import javax.persistence.Table;
 public class ParentTaskEntity {
 	
 	@Id
-	@Column(name="parent_id")
+	@Column(name="TASK_ID")
 	@GeneratedValue(strategy =GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name="parent_task")
+	@Column(name="TASK_NAME")
 	private String name;
 
 	public Integer getId() {

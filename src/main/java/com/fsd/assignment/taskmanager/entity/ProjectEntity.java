@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -37,7 +39,11 @@ public class ProjectEntity implements Serializable {
 	private Integer priority;
 	
 	@Column(name="STATUS")
-	private Integer status;
+	private String status;
+	
+	@ManyToOne
+	@JoinColumn(name = "MANAGER_ID",referencedColumnName = "USER_ID")
+	private UserEntity manager;
 
 	public Integer getId() {
 		return id;
@@ -79,12 +85,20 @@ public class ProjectEntity implements Serializable {
 		this.priority = priority;
 	}
 
-	public Integer getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public UserEntity getManager() {
+		return manager;
+	}
+
+	public void setManager(UserEntity manager) {
+		this.manager = manager;
 	}
 	
 	

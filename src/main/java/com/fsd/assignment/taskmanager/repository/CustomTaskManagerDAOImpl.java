@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.fsd.assignment.taskmanager.entity.ProjectEntity;
 import com.fsd.assignment.taskmanager.entity.TaskEntity;
 import com.fsd.assignment.taskmanager.model.TaskSearchVO;
 
@@ -30,32 +31,11 @@ public class CustomTaskManagerDAOImpl implements CustomTaskManagerDAO {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();		
 		CriteriaQuery cq = cb.createQuery(TaskEntity.class);
 		
-		Root<TaskEntity> root = cq.from(TaskEntity.class);
-		
 		List<Predicate> predicates = new ArrayList<>();
 		if (StringUtils.isNotBlank(taskVo.getTaskName())) {
-	        predicates.add(cb.like(root.get("taskName"), "%"+taskVo.getTaskName()+"%"));
-	    }
-		
-		if(null!=taskVo.getTaskMinPriority()) {
-	        predicates.add(cb.ge(root.get("taskPriority"), taskVo.getTaskMinPriority()));
-	    }
-		
-		if(null!=taskVo.getTaskMaxPriority()) {
-	        predicates.add(cb.le(root.get("taskPriority"), taskVo.getTaskMaxPriority()));
-	    }
-		
-		if(null!=taskVo.getTaskStartDate()) {
-	        predicates.add(cb.greaterThan(root.get("taskStartDt"), taskVo.getTaskStartDate()));
-	    }
-		
-		if(null!=taskVo.getTaskEndDate()) {
-	        predicates.add(cb.lessThan(root.get("taskEndDt"), taskVo.getTaskEndDate()));
-	    }
-		
-		if(StringUtils.isNotBlank(taskVo.getParentTask())) {
-			Join<TaskEntity, TaskEntity> prtskJoin = root.join("parentTask", JoinType.LEFT);
-	        predicates.add(cb.like(prtskJoin.get("taskName"), "%"+taskVo.getParentTask()+"%"));
+			Root<TaskEntity> root = cq.from(TaskEntity.class);
+			Join<TaskEntity, ProjectEntity> projectJoin = root.join("project", JoinType.INNER);
+			predicates.add(cb.like(projectJoin.get("name"), "%"+taskVo.getTaskName()+"%"));
 	    }
 	   
 	    cq.where(predicates.toArray(new Predicate[0]));

@@ -13,7 +13,7 @@ import com.fsd.assignment.taskmanager.entity.ProjectEntity;
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Integer>{
 	
 	@Modifying
-	@Query("update PROJECT set status='IA' where id=:projectId")
+	@Query("update ProjectEntity set status='IA' where id=:projectId")
 	public void suspendProject(Integer projectId);
 
 }

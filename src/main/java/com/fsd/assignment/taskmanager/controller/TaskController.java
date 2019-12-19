@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fsd.assignment.taskmanager.entity.ParentTaskEntity;
 import com.fsd.assignment.taskmanager.entity.TaskEntity;
 import com.fsd.assignment.taskmanager.exception.BusinessException;
 import com.fsd.assignment.taskmanager.model.TaskResultVO;
@@ -71,6 +72,12 @@ public class TaskController {
 			resultVO.setErrMsg(e.getMessage());
 		}
 		return resultVO;
+	}
+	
+	@RequestMapping(value = "/srchParentTask", method = {RequestMethod.POST})
+	public List<ParentTaskEntity> searchParentTask(Model model) {
+		
+		return service.fetchParentTask();
 	}
 	
 }

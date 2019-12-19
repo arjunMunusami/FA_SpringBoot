@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fsd.assignment.taskmanager.entity.ParentTaskEntity;
 import com.fsd.assignment.taskmanager.entity.TaskEntity;
 import com.fsd.assignment.taskmanager.exception.BusinessException;
 import com.fsd.assignment.taskmanager.model.TaskSearchVO;
+import com.fsd.assignment.taskmanager.repository.ParentTaskRepository;
 import com.fsd.assignment.taskmanager.repository.TaskManagerDAO;
 
 @Service
@@ -16,18 +18,21 @@ public class TaskManagerServiceImpl {
 	@Autowired
 	public TaskManagerDAO daoRepo;
 	
+	@Autowired
+	public ParentTaskRepository prtTaskRepo;
+	
 	public TaskEntity saveTaskDetails(TaskEntity taskEntity) throws BusinessException {
 		
-		if(null!=taskEntity.getParentTask()) {
-			TaskEntity parentTask = daoRepo.findByTaskName(taskEntity.getParentTask().getTaskName());
-			if(null==parentTask) {
-				throw new BusinessException("Parent Task is not defined in System!");
-			} else {
-				taskEntity.setParentTask(parentTask);
-			}
+		if(!taskEntity.isPrtTask()) {
+			taskEntity = daoRepo.save(taskEntity);
+		} else {
+			ParentTaskEntity parentTask = new ParentTaskEntity();
+			parentTask.setName(taskEntity.getTaskName());
+			
+			parentTask = prtTaskRepo.save(parentTask);
+			taskEntity.setParentTask(parentTask);
 		}
-		taskEntity = daoRepo.save(taskEntity);
-		
+				
 		return taskEntity;
 	}
 	
@@ -38,6 +43,10 @@ public class TaskManagerServiceImpl {
 	
 	public TaskEntity fetchTaskEntity(Integer taskId) {
 		return daoRepo.findById(taskId).get();
+	}
+	
+	public List<ParentTaskEntity> fetchParentTask() {
+		return prtTaskRepo.findAll();
 	}
 	
 	public void endTask(Integer taskId) {

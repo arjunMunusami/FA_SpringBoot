@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fsd.assignment.taskmanager.entity.ProjectEntity;
-import com.fsd.assignment.taskmanager.entity.UserEntity;
 import com.fsd.assignment.taskmanager.exception.BusinessException;
 import com.fsd.assignment.taskmanager.model.ProjectResultVO;
-import com.fsd.assignment.taskmanager.model.UserResultVO;
 import com.fsd.assignment.taskmanager.service.ProjectServiceImpl;
 
 @RestController
