@@ -30,6 +30,6 @@ public class UserServiceImpl {
 	}
 	
 	public UserEntity loadUserDetail(Integer userId) throws BusinessException {
-		return userDao.getOne(userId);
+		return userDao.findById(userId).get();
 	}
 }

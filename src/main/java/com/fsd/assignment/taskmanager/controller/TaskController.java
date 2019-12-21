@@ -48,7 +48,7 @@ public class TaskController {
 		} catch (RuntimeException e) {
 			resultVO.setErrMsg(e.getMessage());
 		}
-		return resultVO;
+		return resultVO; 
 	}
 	
 	@RequestMapping(value = "/loadTask", method = {RequestMethod.GET})

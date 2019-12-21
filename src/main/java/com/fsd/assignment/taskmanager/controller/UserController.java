@@ -35,14 +35,41 @@ public class UserController {
 		return userResult;
 	}
 	
-	@RequestMapping(value = "/searchUser/{order}", method = {RequestMethod.GET})
-	public UserResultVO searchTask(Model model,
+	@RequestMapping(value = "/sortUser/{order}", method = {RequestMethod.GET})
+	public UserResultVO sortUser(Model model,
 			@PathVariable("order") String orderByField) {
 		UserResultVO resultVO = new UserResultVO();
 		
 		try {
 			List<UserEntity> userDetails = userService.fetchUserDetails(orderByField);
 			resultVO.setUserList(userDetails);
+		} catch (RuntimeException e) {
+			resultVO.setErrMsg(e.getMessage());
+		}
+		return resultVO;
+	}
+	
+	@RequestMapping(value = "/loadUser/{id}", method = {RequestMethod.GET})
+	public UserResultVO loadUser(Model model,
+			@PathVariable("id") Integer userId) {
+		UserResultVO resultVO = new UserResultVO();
+		
+		try {
+			UserEntity userDetail = userService.loadUserDetail(userId);
+			resultVO.setUserData(userDetail);
+		} catch (BusinessException e) {
+			resultVO.setErrMsg(e.getMessage());
+		}
+		return resultVO;
+	}
+	
+	@RequestMapping(value = "/deleteUser/{id}", method = {RequestMethod.GET})
+	public UserResultVO deleteUser(Model model,
+			@PathVariable("id") Integer userId) {
+		UserResultVO resultVO = new UserResultVO();
+		
+		try {
+			userService.deleteUser(userId);
 		} catch (RuntimeException e) {
 			resultVO.setErrMsg(e.getMessage());
 		}
