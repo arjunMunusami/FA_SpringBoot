@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fsd.assignment.taskmanager.entity.ParentTaskEntity;
 import com.fsd.assignment.taskmanager.entity.TaskEntity;
 import com.fsd.assignment.taskmanager.exception.BusinessException;
+import com.fsd.assignment.taskmanager.model.ParentTaskResultVO;
 import com.fsd.assignment.taskmanager.model.TaskResultVO;
 import com.fsd.assignment.taskmanager.model.TaskSearchVO;
 import com.fsd.assignment.taskmanager.service.TaskManagerServiceImpl;
@@ -76,21 +78,27 @@ public class TaskController {
 		return resultVO;
 	}
 	
-	@RequestMapping(value = "/srchParentTask", method = {RequestMethod.POST})
-	public List<ParentTaskEntity> searchParentTask(Model model) {
+	@RequestMapping(value = "/srchParentTask", method = {RequestMethod.GET})
+	public ParentTaskResultVO searchParentTask(Model model) {
 		
-		return service.fetchParentTask();
+		ParentTaskResultVO resultVO = new ParentTaskResultVO();
+		resultVO.setProjectList(service.fetchParentTask());
+		
+		return resultVO;
 	}
 	
 	@RequestMapping(value = "/loadPrtTask", method = {RequestMethod.GET})
-	public List<ParentTaskEntity> loadPrtTask(Model model) {
+	public ParentTaskResultVO loadPrtTask(Model model) {
+		ParentTaskResultVO resultVO = new ParentTaskResultVO();
 		List<ParentTaskEntity> prtTaskList = null;
 		try {
 			prtTaskList = service.fetchParentTask();
+			resultVO.setProjectList(prtTaskList);
 		} catch (RuntimeException e) {
 			prtTaskList = new ArrayList<>();
+			resultVO.setErrorMsg(e.getMessage());
 		}
-		return prtTaskList;
+		return resultVO;
 	}
 	
 }

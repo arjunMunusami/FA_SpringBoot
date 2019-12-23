@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +29,7 @@ import com.fsd.assignment.taskmanager.entity.ProjectEntity;
 import com.fsd.assignment.taskmanager.entity.TaskEntity;
 import com.fsd.assignment.taskmanager.entity.UserEntity;
 import com.fsd.assignment.taskmanager.model.ParentTaskResultVO;
+import com.fsd.assignment.taskmanager.model.ProjectResultVO;
 import com.fsd.assignment.taskmanager.model.TaskResultVO;
 import com.fsd.assignment.taskmanager.model.TaskSearchVO;
 import com.fsd.assignment.taskmanager.repository.ParentTaskRepository;
@@ -38,7 +38,7 @@ import com.fsd.assignment.taskmanager.repository.TaskManagerDAO;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // for restTemplate
-public class TaskControllerTest {
+public class ProjectControllerTest {
 	
 	 private static final ObjectMapper om = new ObjectMapper();
 
@@ -55,12 +55,12 @@ public class TaskControllerTest {
 		public ParentTaskRepository prtTaskRepo;
 	 
 	 @Test
-	    public void saveTaskEntityTest() throws JSONException {
+	    public void saveProjectTest() throws JSONException {
 
-	       TaskEntity taskEntity = buildTaskEntity();
-	       when(taskMgrRepo.save(Mockito.any())).thenReturn(taskEntity);
+	       ProjectEntity project = buildProjectEntity();
+	       when(projectRepo.save(Mockito.any())).thenReturn(project);
 
-	        ResponseEntity<TaskEntity> response = restTemplate.postForEntity("/task/addTask", taskEntity, TaskEntity.class);
+	        ResponseEntity<ProjectResultVO> response = restTemplate.postForEntity("/project/addProject", project, ProjectResultVO.class);
 
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
@@ -68,99 +68,105 @@ public class TaskControllerTest {
 	    }
 	 
 	 @Test
-	 public void saveTaskEntityTestFailure() throws JSONException {
-	       when(taskMgrRepo.save(Mockito.any())).thenThrow(MockitoException.class);
-	        ResponseEntity<TaskEntity> response = restTemplate.postForEntity("/task/addTask", new TaskEntity(), TaskEntity.class);
+	    public void saveProjectFailTest() {
+
+	       ProjectEntity project = buildProjectEntity();
+	       when(projectRepo.save(Mockito.any())).thenThrow(MockitoException.class);
+
+	        ResponseEntity<ProjectResultVO> response = restTemplate.postForEntity("/project/addProject", project, ProjectResultVO.class);
+
 	        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
-	 }
+
+	    }
 	 
 	 @Test
-	 public void searchTaskTest() throws JSONException {
-		 
-		 TaskEntity taskEntity = buildTaskEntity();
-		 TaskEntity taskEntity1 = buildTaskEntity();
-		 ProjectEntity project = new ProjectEntity();
-		 List<TaskEntity> taskEntityList = new ArrayList<>();
-		 taskEntityList.add(taskEntity);
-		 taskEntityList.add(taskEntity1);
-		 project.setTaskList(taskEntityList);
-		 
-	        when(projectRepo.findById(Mockito.any())).thenReturn(Optional.of(project));
-	        ResponseEntity<TaskResultVO> response = restTemplate.postForEntity("/task/searchTask/startDate", new TaskSearchVO(), TaskResultVO.class);
+	 public void sortProjectTest() throws JSONException {
+		 ProjectEntity project = buildProjectEntity();
+		 List<ProjectEntity> projectList = new ArrayList<>();
+		 projectList.add(project);
+	       when(projectRepo.findAll(Sort.by(Sort.Direction.ASC, "name"))).thenReturn(projectList);
+	        ResponseEntity<ProjectResultVO> response = restTemplate.getForEntity("/project/sortProject/Completed", ProjectResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
 	        
-	        response = restTemplate.postForEntity("/task/searchTask/startDate", new TaskSearchVO(), TaskResultVO.class);
-	        assertEquals(HttpStatus.OK, response.getStatusCode());
-	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
-	        
-	        response = restTemplate.postForEntity("/task/searchTask/endDate", new TaskSearchVO(), TaskResultVO.class);
-	        assertEquals(HttpStatus.OK, response.getStatusCode());
-	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
-	        
-	        response = restTemplate.postForEntity("/task/searchTask/priority", new TaskSearchVO(), TaskResultVO.class);
-	        assertEquals(HttpStatus.OK, response.getStatusCode());
-	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
-	        
-	        response = restTemplate.postForEntity("/task/searchTask/status", new TaskSearchVO(), TaskResultVO.class);
+	       response = restTemplate.getForEntity("/project/sortProject/name", ProjectResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
 	 }
 	 
 	 @Test
-	 public void searchTaskFailureTest() throws JSONException {
-		 
-		 TaskEntity taskEntity = buildTaskEntity();
-		 List<TaskEntity> taskEntityList = new ArrayList<>();
-		 taskEntityList.add(taskEntity);
-		 
-		 when(projectRepo.findById(Mockito.any())).thenThrow(MockitoException.class);
-	        ResponseEntity<TaskResultVO> response = restTemplate.postForEntity("/task/searchTask/startDate", new TaskResultVO(), TaskResultVO.class);
+	 public void sortProjectFailTest() throws JSONException {
+		 ProjectEntity project = buildProjectEntity();
+		 List<ProjectEntity> projectList = new ArrayList<>();
+		 projectList.add(project);
+		 when(projectRepo.findAll(Sort.by(Sort.Direction.ASC, "name"))).thenThrow(MockitoException.class);
+	        ResponseEntity<ProjectResultVO> response = restTemplate.getForEntity("/project/sortProject/Completed", ProjectResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
+	        
 	 }
 	 
 	 @Test
-	 public void loadTaskTest() throws JSONException {
+	 public void suspendProjectTest() throws JSONException {
 		 
-		 TaskEntity taskEntity = buildTaskEntity();
+	        ResponseEntity<ProjectResultVO> response = restTemplate.getForEntity("/project/suspendProject/1", ProjectResultVO.class);
+	        assertEquals(HttpStatus.OK, response.getStatusCode());
+	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
+	        
+	 }
+	 
+	 @Test
+	 public void suspendProjectFailTest() throws JSONException {
 		 
-		 Optional<TaskEntity> taskEntityOpt = Optional.of(taskEntity);
+		 Mockito.doThrow(MockitoException.class).when(projectRepo).suspendProject(Mockito.anyInt());
+		 
+	        ResponseEntity<ProjectResultVO> response = restTemplate.getForEntity("/project/suspendProject/1", ProjectResultVO.class);
+	        assertEquals(HttpStatus.OK, response.getStatusCode());
+	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
+	        
+	 }
+	 
+	 @Test
+	 public void loadProjectTest() throws JSONException {
+		 
+		 ProjectEntity projectEntity =  buildProjectEntity();		 
+		 Optional<ProjectEntity> projectOpt = Optional.of(projectEntity);
 	      
-		 when(taskMgrRepo.findById(Mockito.any())).thenReturn(taskEntityOpt);
-	        ResponseEntity<TaskResultVO> response = restTemplate.getForEntity("/task/loadTask?taskId=1",  TaskResultVO.class);
+		 when(projectRepo.findById(Mockito.any())).thenReturn(projectOpt);
+	        ResponseEntity<ProjectResultVO> response = restTemplate.getForEntity("/project/loadProject/1",  ProjectResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
 	 }
 	 
 	 @Test
-	 public void srchParentTaskTest() throws JSONException {
+	 public void loadProjectFailTest() throws JSONException {
 		 
-		 List<ParentTaskEntity> prtTaskEntityList = new ArrayList<>();
-		 ParentTaskEntity prtTaskEntity = new ParentTaskEntity();
-		 prtTaskEntityList.add(prtTaskEntity);
-		 
-		 when(prtTaskRepo.findAll()).thenReturn(prtTaskEntityList);
-		 
-		 
-		 
-	        ResponseEntity<ParentTaskResultVO> response = restTemplate.getForEntity("/task/srchParentTask", ParentTaskResultVO.class);
+		 when(taskMgrRepo.findById(Mockito.any())).thenThrow(MockitoException.class);
+	        ResponseEntity<ProjectResultVO> response = restTemplate.getForEntity("/project/loadProject/1",  ProjectResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
 	 }
 	 
-	 @Test
-	 public void loadPrtTaskTest() throws JSONException {
+	 private ProjectEntity buildProjectEntity() {
 		 
-		 List<ParentTaskEntity> prtTaskEntityList = new ArrayList<>();
-		 ParentTaskEntity prtTaskEntity = new ParentTaskEntity();
-		 prtTaskEntityList.add(prtTaskEntity);
+		 UserEntity userEntity = new UserEntity();		     
+	       userEntity.setUserId(1);
 		 
-		 when(prtTaskRepo.findAll()).thenReturn(prtTaskEntityList);
-	        ResponseEntity<ParentTaskResultVO> response = restTemplate.getForEntity("/task/loadPrtTask", ParentTaskResultVO.class);
-	        assertEquals(HttpStatus.OK, response.getStatusCode());
-	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
+		 ProjectEntity project = new ProjectEntity();
+		 project.setStartDate(new Date());
+		 project.setEndDate(new Date());
+		 project.setName("project");
+		 project.setPriority(1);
+		 project.setManager(userEntity);
+		 
+	      List<TaskEntity> taskList = new ArrayList<>();
+	      
+	      project.setTaskList(taskList);
+	      
+	       
+	       return project;
+		 
 	 }
 	 
 	 private TaskEntity buildTaskEntity() {

@@ -1,5 +1,7 @@
 package com.fsd.assignment.taskmanager.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,8 +11,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="PARENT_TASK")
-public class ParentTaskEntity {
+public class ParentTaskEntity implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4672818117707005707L;
+
 	@Id
 	@Column(name="TASK_ID")
 	@GeneratedValue(strategy =GenerationType.IDENTITY)
