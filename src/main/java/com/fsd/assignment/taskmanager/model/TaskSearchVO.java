@@ -22,6 +22,8 @@ public class TaskSearchVO implements Serializable {
 	
 	private Date taskEndDate;
 	
+	private Integer projectId;
+	
 	public String getTaskName() {
 		return taskName;
 	}
@@ -68,6 +70,14 @@ public class TaskSearchVO implements Serializable {
 
 	public void setTaskEndDate(Date taskEndDate) {
 		this.taskEndDate = taskEndDate;
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 
 }

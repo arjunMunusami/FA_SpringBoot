@@ -6,6 +6,7 @@ import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,9 +37,9 @@ public class ProjectController {
 		return projectResult;
 	}
 	
-	@RequestMapping(value = "/searchProject/{order}", method = {RequestMethod.GET})
+	@RequestMapping(value = "/sortProject/{order}", method = {RequestMethod.GET})
 	public ProjectResultVO searchTask(Model model,
-			@PathParam("orderField") String orderField) {
+			@PathVariable("order") String orderField) {
 		ProjectResultVO projectResult = new ProjectResultVO();
 		
 		try {
@@ -52,11 +53,24 @@ public class ProjectController {
 	
 	@RequestMapping(value = "/suspendProject/{projectId}", method = {RequestMethod.GET})
 	public ProjectResultVO suspendProject(Model model,
-			@PathParam("projectId") Integer projectId) {
+			@PathVariable("projectId") Integer projectId) {
 		ProjectResultVO projectResult = new ProjectResultVO();
 		try {
 			service.suspendProject(projectId);
 		} catch (RuntimeException e) {
+			projectResult.setErrorMsg(e.getMessage());
+		}
+		return projectResult;
+	}
+	
+	@RequestMapping(value = "/loadProject/{projectId}", method = {RequestMethod.GET})
+	public ProjectResultVO editProject(Model model,
+			@PathVariable("projectId") Integer projectId) {
+		ProjectResultVO projectResult = new ProjectResultVO();
+		try {
+			ProjectEntity projectEntity = service.loadProjectDetail(projectId);
+			projectResult.setData(projectEntity);
+		} catch (RuntimeException | BusinessException e) {
 			projectResult.setErrorMsg(e.getMessage());
 		}
 		return projectResult;

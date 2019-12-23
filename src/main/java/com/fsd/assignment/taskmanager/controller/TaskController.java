@@ -1,5 +1,6 @@
 package com.fsd.assignment.taskmanager.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,13 @@ public class TaskController {
 		return taskResult;
 	}
 	
-	@RequestMapping(value = "/searchTask", method = {RequestMethod.POST})
-	public TaskResultVO searchTask(Model model,@RequestBody TaskSearchVO taskSearch) {
+	@RequestMapping(value = "/searchTask/{orderField}", method = {RequestMethod.POST})
+	public TaskResultVO searchTask(Model model,@RequestBody TaskSearchVO taskSearch,
+			@PathVariable("orderField") String orderField ) {
 		TaskResultVO resultVO = new TaskResultVO();
 		
 		try {
-			List<TaskEntity> taskDetails = service.fetchTaskDetails(taskSearch);
+			List<TaskEntity> taskDetails = service.fetchTaskDetails(taskSearch,orderField);
 			resultVO.setTaskList(taskDetails);
 		} catch (RuntimeException e) {
 			resultVO.setErrMsg(e.getMessage());
@@ -78,6 +80,17 @@ public class TaskController {
 	public List<ParentTaskEntity> searchParentTask(Model model) {
 		
 		return service.fetchParentTask();
+	}
+	
+	@RequestMapping(value = "/loadPrtTask", method = {RequestMethod.GET})
+	public List<ParentTaskEntity> loadPrtTask(Model model) {
+		List<ParentTaskEntity> prtTaskList = null;
+		try {
+			prtTaskList = service.fetchParentTask();
+		} catch (RuntimeException e) {
+			prtTaskList = new ArrayList<>();
+		}
+		return prtTaskList;
 	}
 	
 }

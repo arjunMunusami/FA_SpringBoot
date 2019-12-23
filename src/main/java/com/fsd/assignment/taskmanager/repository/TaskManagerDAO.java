@@ -10,7 +10,7 @@ import com.fsd.assignment.taskmanager.entity.TaskEntity;
 
 @EnableJpaRepositories
 @Transactional
-public interface TaskManagerDAO extends JpaRepository<TaskEntity, Integer> , CustomTaskManagerDAO {
+public interface TaskManagerDAO extends JpaRepository<TaskEntity, Integer> {
 	
 	
 	public TaskEntity findByTaskName(String taskName);

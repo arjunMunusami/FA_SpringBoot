@@ -72,7 +72,7 @@ public class TaskControllerTest {
 		 List<TaskEntity> taskEntityList = new ArrayList<>();
 		 taskEntityList.add(taskEntity);
 		 
-	       when(taskMgrRepo.fetchTaskDetails(Mockito.any())).thenReturn(taskEntityList);
+	      // when(taskMgrRepo.fetchTaskDetails(Mockito.any())).thenReturn(taskEntityList);
 	        ResponseEntity<TaskResultVO> response = restTemplate.postForEntity("/task/searchTask", new TaskResultVO(), TaskResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
@@ -85,7 +85,7 @@ public class TaskControllerTest {
 		 List<TaskEntity> taskEntityList = new ArrayList<>();
 		 taskEntityList.add(taskEntity);
 		 
-	       when(taskMgrRepo.fetchTaskDetails(Mockito.any())).thenThrow(BusinessException.class);
+	     //  when(taskMgrRepo.fetchTaskDetails(Mockito.any())).thenThrow(BusinessException.class);
 	        ResponseEntity<TaskResultVO> response = restTemplate.postForEntity("/task/searchTask", new TaskResultVO(), TaskResultVO.class);
 	        assertEquals(HttpStatus.OK, response.getStatusCode());
 	        assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());

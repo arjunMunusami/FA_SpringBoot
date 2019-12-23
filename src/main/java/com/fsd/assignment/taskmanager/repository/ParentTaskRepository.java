@@ -8,7 +8,7 @@ import com.fsd.assignment.taskmanager.entity.ParentTaskEntity;
 
 @EnableJpaRepositories
 @Transactional
-public interface ParentTaskRepository extends JpaRepository<ParentTaskEntity, Integer> , CustomTaskManagerDAO {
+public interface ParentTaskRepository extends JpaRepository<ParentTaskEntity, Integer> {
 	
 	
 	public ParentTaskEntity findByName(String taskName);
